@@ -15,6 +15,8 @@ import java.io.OutputStream;
 
 /**
  * Responsible for starting compress and managing active and cached resources.
+ * <p>
+ * xyzxqs note: refactor from https://github.com/Curzibn/Luban
  */
 enum Luban {
     Instance;

@@ -30,8 +30,11 @@ import java.util.Map;
 /**
  * This class does the work of decoding the user's request and extracting all the data
  * to be encoded in a barcode.
+ * <p>
+ * xyzxqs note: refactor from zxing android project QRCodeEncoder.java
  *
  * @author dswitkin@google.com (Daniel Switkin)
+ * @author xyzxqs
  */
 public final class ZxingEncoder {
 

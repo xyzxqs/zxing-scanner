@@ -38,6 +38,9 @@ import java.util.Set;
 
 import io.github.xyzxqs.zxingscanner.R;
 
+/**
+ * xyzxqs note: adapter from https://github.com/google/cameraview
+ */
 public class CameraView extends FrameLayout {
 
     /**
