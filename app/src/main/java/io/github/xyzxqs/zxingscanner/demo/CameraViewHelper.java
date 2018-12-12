@@ -6,11 +6,6 @@ import android.arch.lifecycle.OnLifecycleEvent;
 
 import com.google.zxing.Result;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import io.github.xyzxqs.zxingscanner.cameraview.CameraView;
 import io.github.xyzxqs.zxingscanner.decode.RotatableYUVLuminanceSource;
 import io.github.xyzxqs.zxingscanner.decode.ZxingDecoder;

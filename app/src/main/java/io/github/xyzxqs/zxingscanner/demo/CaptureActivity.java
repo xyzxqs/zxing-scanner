@@ -22,8 +22,6 @@ import io.github.xyzxqs.zxingscanner.demo.util.PermissionUtil;
 import io.github.xyzxqs.zxingscanner.demo.util.RealPathUtils;
 
 public class CaptureActivity extends AppCompatActivity implements CameraViewHelper.OnDecodeResult {
-    private static final int req_GALLERY = 395;
-    private static final String TAG = "CaptureActivity";
 
     public static Intent newIntent(Context context) {
         Intent i = new Intent(context, CaptureActivity.class);
@@ -37,7 +35,7 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
     CameraView cameraView;
 
     private CameraViewHelper cameraViewHelper;
-    private ImageViewHelper imageViewHelper;
+    private ImageHelper imageHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,7 +45,7 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
 
         setSupportActionBar(toolbar);
 
-        imageViewHelper = new ImageViewHelper();
+        imageHelper = new ImageHelper();
         cameraViewHelper = new CameraViewHelper(getLifecycle(), cameraView);
 
         cameraViewHelper.setDecodeResultHandler(this);
@@ -107,9 +105,9 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
         Uri temp = data.getData();
         if (temp != null) {
             String realPath = RealPathUtils.getRealPath(this, temp);
-            imageViewHelper.decodeImage(realPath, new ImageViewHelper.ImageDecodeCallback() {
+            imageHelper.decodeImage(realPath, new ImageHelper.ImageDecodeCallback() {
                 @Override
-                public void onFoundResult(Result rawResult) {
+                public void onFound(Result rawResult) {
                     handleDecodeResult(rawResult);
                 }
 

@@ -9,7 +9,7 @@ import java.io.IOException;
 import io.github.xyzxqs.zxingscanner.decode.ZxingDecoder;
 import io.github.xyzxqs.zxingscanner.demo.util.ThreadUtils;
 
-public class ImageViewHelper {
+public class ImageHelper {
 
 
     private ZxingDecoder zxingDecoder = null;
@@ -36,7 +36,7 @@ public class ImageViewHelper {
                         callback.onNotFound();
                     }
                     else {
-                        callback.onFoundResult(finalResult);
+                        callback.onFound(finalResult);
                     }
                 }
             });
@@ -44,7 +44,7 @@ public class ImageViewHelper {
     }
 
     public interface ImageDecodeCallback {
-        void onFoundResult(Result rawResult);
+        void onFound(Result rawResult);
 
         void onNotFound();
     }
