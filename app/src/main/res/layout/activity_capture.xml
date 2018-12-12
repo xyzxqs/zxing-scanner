@@ -9,6 +9,11 @@
         android:adjustViewBounds="false"
         android:background="@android:color/black" />
 
+    <io.github.xyzxqs.zxingscanner.demo.ViewfinderView
+        android:id="@+id/viewfinder_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

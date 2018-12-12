@@ -34,6 +34,9 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
     @BindView(R.id.camera_view)
     CameraView cameraView;
 
+    @BindView(R.id.viewfinder_view)
+    ViewfinderView viewfinderView;
+
     private CameraViewHelper cameraViewHelper;
     private ImageHelper imageHelper;
 
@@ -47,8 +50,10 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
 
         imageHelper = new ImageHelper();
         cameraViewHelper = new CameraViewHelper(getLifecycle(), cameraView);
-
         cameraViewHelper.setDecodeResultHandler(this);
+        viewfinderView.setCameraViewHelper(cameraViewHelper);
+        cameraViewHelper.setResultPointCallback(point ->
+                viewfinderView.addPossibleResultPoint(point));
 
         cameraView.addCallback(new CameraView.Callback() {
             @Override
