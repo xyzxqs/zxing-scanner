@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -258,6 +259,12 @@ class Camera1 extends CameraViewImpl implements Camera.PreviewCallback {
         }
     }
 
+    @Nullable
+    @Override
+    Size getPreviewSize() {
+        return previewSize;
+    }
+
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         //previewSize == null是没有开启或者已经关闭
@@ -374,6 +381,15 @@ class Camera1 extends CameraViewImpl implements Camera.PreviewCallback {
         setAutoFocusInternal(mAutoFocus);
         setFlashInternal(mFlash);
         mCamera.setParameters(mCameraParameters);
+
+        Camera.Parameters afterParameters = mCamera.getParameters();
+        Camera.Size afterPreviewSize = afterParameters.getPreviewSize();
+        if (previewSize.getHeight() != afterPreviewSize.height || previewSize.getWidth() != afterPreviewSize.width) {
+            Log.w("Camera1", "Camera said it supported preview size " + previewSize.getWidth() + 'x' + previewSize.getHeight() +
+                    ", but after setting it, preview size is " + afterPreviewSize.width + 'x' + afterPreviewSize.height);
+            previewSize = new Size(afterPreviewSize.width, afterPreviewSize.height);
+        }
+
         if (mShowingPreview) {
             mCamera.startPreview();
         }

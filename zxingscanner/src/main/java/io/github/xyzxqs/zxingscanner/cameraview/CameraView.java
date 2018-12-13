@@ -440,6 +440,11 @@ public class CameraView extends FrameLayout {
         mImpl.requestOneShotPreview(callback);
     }
 
+    @Nullable
+    public Size getPreviewSize() {
+        return mImpl.getPreviewSize();
+    }
+
     private class CallbackBridge implements CameraViewImpl.Callback {
 
         private final ArrayList<Callback> mCallbacks = new ArrayList<>();

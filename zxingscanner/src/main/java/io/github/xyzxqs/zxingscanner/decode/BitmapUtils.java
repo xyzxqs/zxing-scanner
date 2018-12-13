@@ -24,9 +24,13 @@ public class BitmapUtils {
     public static Bitmap decodeStream(InputStreamProvider provider) throws IOException {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
             compressImage(provider, stream, false);
-            byte[] bytes = stream.toByteArray();
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            return decodeStream(stream);
         }
+    }
+
+    public static Bitmap decodeStream(ByteArrayOutputStream out) {
+        byte[] bytes = out.toByteArray();
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
     public static void compressImage(InputStreamProvider srcImg, OutputStream os, boolean focusAlpha) throws IOException {
@@ -42,7 +46,7 @@ public class BitmapUtils {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out);
     }
 
-    public static void buildThumbnail(RotatableYUVLuminanceSource source, OutputStream out) {
+    public static void buildThumbnail(RotatablePlanarYUVLuminanceSource source, OutputStream out) {
         int[] pixels = source.renderThumbnail();
         int width = source.getThumbnailWidth();
         int height = source.getThumbnailHeight();

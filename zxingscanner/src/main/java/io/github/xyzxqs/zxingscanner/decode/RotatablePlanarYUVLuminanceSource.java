@@ -13,7 +13,7 @@ import com.google.zxing.PlanarYUVLuminanceSource;
  *
  * @author xyzxqs
  */
-public class RotatableYUVLuminanceSource extends LuminanceSource {
+public class RotatablePlanarYUVLuminanceSource extends LuminanceSource {
     private static final String TAG = "YUVLuminanceSource";
     private PlanarYUVLuminanceSource realSource;
 
@@ -23,7 +23,7 @@ public class RotatableYUVLuminanceSource extends LuminanceSource {
     private final int left;
     private final int top;
 
-    public RotatableYUVLuminanceSource(byte[] yuvData,
+    public RotatablePlanarYUVLuminanceSource(byte[] yuvData,
                                        int dataWidth,
                                        int dataHeight,
                                        int left,
@@ -81,7 +81,7 @@ public class RotatableYUVLuminanceSource extends LuminanceSource {
             }
         }
 
-        return new RotatableYUVLuminanceSource(rightRotate90Data,
+        return new RotatablePlanarYUVLuminanceSource(rightRotate90Data,
                 dataHeight/*dataWidth*/,
                 dataWidth/*dataHeight*/,
                 dataHeight - (top + getHeight())/*left*/,
