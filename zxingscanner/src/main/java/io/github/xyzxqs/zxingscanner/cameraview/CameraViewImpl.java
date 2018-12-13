@@ -16,6 +16,7 @@
 
 package io.github.xyzxqs.zxingscanner.cameraview;
 
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import java.util.Set;
@@ -68,6 +69,9 @@ abstract class CameraViewImpl {
     abstract void takePicture();
 
     abstract void requestOneShotPreview(OneShotPreviewCallback callback);
+
+    @Nullable
+    abstract Size getPreviewSize();
 
     abstract void setDisplayOrientation(int displayOrientation);
 
