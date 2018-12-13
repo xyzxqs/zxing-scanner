@@ -3,15 +3,16 @@ package io.github.xyzxqs.zxingscanner.demo;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
-import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.util.Log;
 
 import com.google.zxing.Result;
 import com.google.zxing.ResultPointCallback;
 
 import io.github.xyzxqs.zxingscanner.cameraview.CameraView;
-import io.github.xyzxqs.zxingscanner.decode.RotatableYUVLuminanceSource;
+import io.github.xyzxqs.zxingscanner.cameraview.Size;
+import io.github.xyzxqs.zxingscanner.decode.RotatablePlanarYUVLuminanceSource;
 import io.github.xyzxqs.zxingscanner.decode.ZxingDecoder;
 import io.github.xyzxqs.zxingscanner.demo.util.ThreadUtils;
 
@@ -32,6 +33,8 @@ public class CameraViewHelper implements LifecycleObserver {
     private ZxingDecoder zxingDecoder = null;
 
     private ResultPointCallback resultPointCallback;
+
+    private boolean fullscreenScan = false;
 
     public CameraViewHelper(Lifecycle lifecycle, CameraView cameraView) {
         this.cameraView = cameraView;
@@ -72,16 +75,28 @@ public class CameraViewHelper implements LifecycleObserver {
         cameraView.requestOneShotPreview((data, width, height) ->
         {
             ThreadUtils.runOnBackgroundThread(() -> {
-                RotatableYUVLuminanceSource source = new RotatableYUVLuminanceSource(data, width, height,
-                        0, 0, width, height, false);
+
+                RotatablePlanarYUVLuminanceSource source = null;
+                if (fullscreenScan) {
+                    source = new RotatablePlanarYUVLuminanceSource(data, width, height,
+                            0, 0, width, height, false);
+                }
+                else {
+                    Rect rect = getFramingRectInPreview();
+                    if (rect != null) {
+                        source = new RotatablePlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
+                                rect.width(), rect.height(), false);
+                    }
+                }
                 final Result result = zxingDecoder.decode(source);
+                final RotatablePlanarYUVLuminanceSource finalSource = source;
 
                 ThreadUtils.runOnMainThread(() -> {
                     if (result == null) {
                         startDecode();
                     }
                     else {
-                        handleDecodeResult(result);
+                        handleDecodeResult(finalSource, result);
                     }
                 });
             });
@@ -90,6 +105,8 @@ public class CameraViewHelper implements LifecycleObserver {
 
     private Rect framingRect;
     private Rect framingRectInPreview;
+    //cameraView的大小
+    private Size cameraViewSize;
 
     /**
      * Calculates the framing rect which the UI should draw to show the user where to place the
@@ -100,17 +117,14 @@ public class CameraViewHelper implements LifecycleObserver {
      */
     public Rect getFramingRect() {
         if (framingRect == null) {
-            Point screenResolution = new Point(cameraView.getWidth(), cameraView.getHeight());
-            if (screenResolution == null) {
-                // Called early, before init even finished
-                return null;
-            }
 
-            int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
-            int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
+            cameraViewSize = new Size(cameraView.getWidth(), cameraView.getHeight());
 
-            int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 2;
+            int width = findDesiredDimensionInRange(cameraViewSize.getWidth(), MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
+            int height = findDesiredDimensionInRange(cameraViewSize.getHeight(), MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
+
+            int leftOffset = (cameraViewSize.getWidth() - width) / 2;
+            int topOffset = (cameraViewSize.getHeight() - height) / 2;
             framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
@@ -136,17 +150,29 @@ public class CameraViewHelper implements LifecycleObserver {
      */
     public Rect getFramingRectInPreview() {
         if (framingRectInPreview == null) {
-            //现在是一样的。。
-            framingRectInPreview = getFramingRect();
+
+            Size previewSize = cameraView.getPreviewSize();
+            if (previewSize == null || framingRect == null || cameraViewSize == null) {
+                return null;
+            }
+
+            Rect rect = new Rect(framingRect);
+
+            rect.left = rect.left * previewSize.getWidth() / cameraViewSize.getWidth();
+            rect.right = rect.right * previewSize.getWidth() / cameraViewSize.getWidth();
+            rect.top = rect.top * previewSize.getHeight() / cameraViewSize.getHeight();
+            rect.bottom = rect.bottom * previewSize.getHeight() / cameraViewSize.getHeight();
+
+            framingRectInPreview = rect;
         }
         return framingRectInPreview;
     }
 
     private OnDecodeResult onDecodeResult = null;
 
-    private void handleDecodeResult(Result rawResult) {
+    private void handleDecodeResult(RotatablePlanarYUVLuminanceSource source, Result rawResult) {
         if (onDecodeResult != null) {
-            onDecodeResult.handleDecodeResult(rawResult);
+            onDecodeResult.handleDecodeResult(source, rawResult);
         }
     }
 
@@ -159,6 +185,6 @@ public class CameraViewHelper implements LifecycleObserver {
     }
 
     public interface OnDecodeResult {
-        void handleDecodeResult(Result rawResult);
+        void handleDecodeResult(RotatablePlanarYUVLuminanceSource source, Result rawResult);
     }
 }

@@ -2,6 +2,7 @@ package io.github.xyzxqs.zxingscanner.demo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,9 +15,14 @@ import android.widget.Toast;
 
 import com.google.zxing.Result;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.xyzxqs.zxingscanner.cameraview.CameraView;
+import io.github.xyzxqs.zxingscanner.decode.BitmapUtils;
+import io.github.xyzxqs.zxingscanner.decode.RotatablePlanarYUVLuminanceSource;
 import io.github.xyzxqs.zxingscanner.demo.util.Caller;
 import io.github.xyzxqs.zxingscanner.demo.util.PermissionUtil;
 import io.github.xyzxqs.zxingscanner.demo.util.RealPathUtils;
@@ -66,10 +72,21 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
 
 
     @Override
-    public void handleDecodeResult(Result rawResult) {
+    public void handleDecodeResult(@Nullable RotatablePlanarYUVLuminanceSource source, Result rawResult) {
         Toast.makeText(this, rawResult.getText(), Toast.LENGTH_LONG)
                 .show();
-        finish();
+//        finish();
+        if (source != null) {
+
+            try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+                BitmapUtils.buildThumbnail(source, stream);
+                Bitmap bitmap= BitmapUtils.decodeStream(stream);
+                viewfinderView.drawResultBitmap(bitmap);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -113,7 +130,7 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
             imageHelper.decodeImage(realPath, new ImageHelper.ImageDecodeCallback() {
                 @Override
                 public void onFound(Result rawResult) {
-                    handleDecodeResult(rawResult);
+                    handleDecodeResult(null, rawResult);
                 }
 
                 @Override
