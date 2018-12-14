@@ -25,8 +25,8 @@ import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.github.xyzxqs.zxingscanner.cameraview.CameraView;
-import io.github.xyzxqs.zxingscanner.cameraview.OneShotPreviewCallback;
+import io.github.xyzxqs.cameraview.CameraView;
+import io.github.xyzxqs.cameraview.OneShotPreviewCallback;
 import io.github.xyzxqs.zxingscanner.decode.BitmapUtils;
 import io.github.xyzxqs.zxingscanner.decode.RotatablePlanarYUVLuminanceSource;
 import io.github.xyzxqs.zxingscanner.demo.util.Caller;

@@ -9,8 +9,8 @@ import android.util.Log;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPointCallback;
 
-import io.github.xyzxqs.zxingscanner.cameraview.CameraView;
-import io.github.xyzxqs.zxingscanner.cameraview.Size;
+import io.github.xyzxqs.cameraview.CameraView;
+import io.github.xyzxqs.cameraview.Size;
 import io.github.xyzxqs.zxingscanner.decode.RotatablePlanarYUVLuminanceSource;
 import io.github.xyzxqs.zxingscanner.decode.ZxingDecoder;
 import io.github.xyzxqs.zxingscanner.demo.util.ThreadUtils;
