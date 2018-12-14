@@ -70,6 +70,8 @@ abstract class CameraViewImpl {
 
     abstract void requestOneShotPreview(OneShotPreviewCallback callback);
 
+    abstract int getCameraRotation();
+
     @Nullable
     abstract Size getPreviewSize();
 
