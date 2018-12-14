@@ -51,7 +51,8 @@ public class AspectRatio implements Comparable<AspectRatio>, Parcelable {
             arrayX.put(y, ratio);
             sCache.put(x, arrayX);
             return ratio;
-        } else {
+        }
+        else {
             AspectRatio ratio = arrayX.get(y);
             if (ratio == null) {
                 ratio = new AspectRatio(x, y);
@@ -77,7 +78,8 @@ public class AspectRatio implements Comparable<AspectRatio>, Parcelable {
             int x = Integer.parseInt(s.substring(0, position));
             int y = Integer.parseInt(s.substring(position + 1));
             return AspectRatio.of(x, y);
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             throw new IllegalArgumentException("Malformed aspect ratio: " + s, e);
         }
     }
@@ -136,7 +138,8 @@ public class AspectRatio implements Comparable<AspectRatio>, Parcelable {
     public int compareTo(@NonNull AspectRatio another) {
         if (equals(another)) {
             return 0;
-        } else if (toFloat() - another.toFloat() > 0) {
+        }
+        else if (toFloat() - another.toFloat() > 0) {
             return 1;
         }
         return -1;
