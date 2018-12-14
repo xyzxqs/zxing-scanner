@@ -41,7 +41,7 @@ public final class ZxingEncoder {
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
 
-    private ZxingEncoder(){
+    private ZxingEncoder() {
         //no instance
     }
 
