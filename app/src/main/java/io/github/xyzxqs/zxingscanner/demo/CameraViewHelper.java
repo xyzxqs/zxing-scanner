@@ -4,7 +4,6 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.graphics.Rect;
-import android.graphics.YuvImage;
 import android.util.Log;
 
 import com.google.zxing.Result;
@@ -103,10 +102,10 @@ public class CameraViewHelper implements LifecycleObserver {
         });
     }
 
-    private Rect framingRect;
-    private Rect framingRectInPreview;
+    private volatile Rect framingRect;
+    private volatile Rect framingRectInPreview;
     //cameraView的大小
-    private Size cameraViewSize;
+    private volatile Size cameraViewSize;
 
     /**
      * Calculates the framing rect which the UI should draw to show the user where to place the
@@ -152,18 +151,37 @@ public class CameraViewHelper implements LifecycleObserver {
         if (framingRectInPreview == null) {
 
             Size previewSize = cameraView.getPreviewSize();
-            if (previewSize == null || framingRect == null || cameraViewSize == null) {
+            if (previewSize == null) {
                 return null;
             }
+            Rect rect = new Rect(getFramingRect());
 
-            Rect rect = new Rect(framingRect);
+            int realPreviewWidth, realPreviewHeight;
+            if (previewSize.getWidth() < cameraViewSize.getWidth() && previewSize.getHeight() > cameraViewSize.getHeight()) {
+                //以width当真的width
+                realPreviewWidth = previewSize.getWidth();
+                realPreviewHeight = realPreviewWidth * cameraViewSize.getHeight() / cameraViewSize.getWidth();
+            }
+            else if (previewSize.getWidth() > cameraViewSize.getWidth() && previewSize.getHeight() < cameraViewSize.getHeight()) {
+                //以height当真的height
+                realPreviewHeight = previewSize.getHeight();
+                realPreviewWidth = realPreviewHeight * cameraViewSize.getWidth() / cameraViewSize.getHeight();
+            }
+            else {
+                realPreviewWidth = previewSize.getWidth();
+                realPreviewHeight = previewSize.getHeight();
+            }
 
-            rect.left = rect.left * previewSize.getWidth() / cameraViewSize.getWidth();
-            rect.right = rect.right * previewSize.getWidth() / cameraViewSize.getWidth();
-            rect.top = rect.top * previewSize.getHeight() / cameraViewSize.getHeight();
-            rect.bottom = rect.bottom * previewSize.getHeight() / cameraViewSize.getHeight();
 
-            framingRectInPreview = rect;
+            rect.left = rect.left * realPreviewWidth / cameraViewSize.getWidth();
+            rect.right = rect.right * realPreviewWidth / cameraViewSize.getWidth();
+            rect.top = rect.top * realPreviewHeight / cameraViewSize.getHeight();
+            rect.bottom = rect.bottom * realPreviewHeight / cameraViewSize.getHeight();
+
+            int realLeft = (previewSize.getWidth() - realPreviewWidth) / 2 + rect.left;
+            int realTop = (previewSize.getHeight() - realPreviewHeight) / 2 + rect.top;
+
+            framingRectInPreview = new Rect(realLeft, realTop, realLeft + rect.width(), realTop + rect.height());
         }
         return framingRectInPreview;
     }

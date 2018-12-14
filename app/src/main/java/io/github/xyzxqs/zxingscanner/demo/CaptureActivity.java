@@ -3,6 +3,9 @@ package io.github.xyzxqs.zxingscanner.demo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
@@ -21,6 +26,7 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.xyzxqs.zxingscanner.cameraview.CameraView;
+import io.github.xyzxqs.zxingscanner.cameraview.OneShotPreviewCallback;
 import io.github.xyzxqs.zxingscanner.decode.BitmapUtils;
 import io.github.xyzxqs.zxingscanner.decode.RotatablePlanarYUVLuminanceSource;
 import io.github.xyzxqs.zxingscanner.demo.util.Caller;
@@ -42,6 +48,9 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
 
     @BindView(R.id.viewfinder_view)
     ViewfinderView viewfinderView;
+
+    @BindView(R.id.image)
+    ImageView imageView;
 
     private CameraViewHelper cameraViewHelper;
     private ImageHelper imageHelper;
@@ -66,6 +75,7 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
             public void onCameraOpened(CameraView cameraView) {
                 super.onCameraOpened(cameraView);
                 cameraViewHelper.startDecode();
+
             }
         });
     }
@@ -80,7 +90,7 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
 
             try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
                 BitmapUtils.buildThumbnail(source, stream);
-                Bitmap bitmap= BitmapUtils.decodeStream(stream);
+                Bitmap bitmap = BitmapUtils.decodeStream(stream);
                 viewfinderView.drawResultBitmap(bitmap);
             }
             catch (IOException e) {
@@ -95,12 +105,49 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
         return super.onCreateOptionsMenu(menu);
     }
 
+    private boolean isFullScreen = false;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.select_from_gallery) {
             PermissionUtil.checkPermission4AccessFile(cameraView,
                     this::startGalleryIntent);
             return true;
+        }
+        else if (item.getItemId() == R.id.one_shot_preview) {
+            cameraView.requestOneShotPreview(new OneShotPreviewCallback() {
+                @Override
+                public void onShot(byte[] data, int width, int height) {
+
+                    YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, width, height, null);
+                    Rect pr;
+                    if (isFullScreen) {
+                        pr = new Rect(1, 1, width - 2, height - 2);
+                    }
+                    else {
+                        pr = cameraViewHelper.getFramingRectInPreview();
+                    }
+                    try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+                        yuvImage.compressToJpeg(pr, 50, stream);
+                        Bitmap bitmap = BitmapUtils.decodeStream(stream);
+
+                        imageView.setVisibility(View.VISIBLE);
+                        imageView.setRotation(cameraView.getCameraRotation());
+                        imageView.setImageBitmap(bitmap);
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            });
+        }
+        else if (item.getItemId() == R.id.clear_preview) {
+            imageView.setImageDrawable(null);
+            imageView.setVisibility(View.GONE);
+            viewfinderView.drawResultBitmap(null);
+            cameraViewHelper.startDecode();
         }
         return super.onOptionsItemSelected(item);
     }
