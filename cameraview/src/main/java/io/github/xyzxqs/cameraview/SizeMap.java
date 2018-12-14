@@ -41,7 +41,8 @@ class SizeMap {
                 final SortedSet<Size> sizes = mRatios.get(ratio);
                 if (sizes.contains(size)) {
                     return false;
-                } else {
+                }
+                else {
                     sizes.add(size);
                     return true;
                 }
