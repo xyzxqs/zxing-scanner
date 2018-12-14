@@ -445,6 +445,10 @@ public class CameraView extends FrameLayout {
         return mImpl.getPreviewSize();
     }
 
+    public int getCameraRotation() {
+        return mImpl.getCameraRotation();
+    }
+
     private class CallbackBridge implements CameraViewImpl.Callback {
 
         private final ArrayList<Callback> mCallbacks = new ArrayList<>();

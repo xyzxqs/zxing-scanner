@@ -259,6 +259,11 @@ class Camera1 extends CameraViewImpl implements Camera.PreviewCallback {
         }
     }
 
+    @Override
+    int getCameraRotation() {
+        return calcCameraRotation(mDisplayOrientation);
+    }
+
     @Nullable
     @Override
     Size getPreviewSize() {
