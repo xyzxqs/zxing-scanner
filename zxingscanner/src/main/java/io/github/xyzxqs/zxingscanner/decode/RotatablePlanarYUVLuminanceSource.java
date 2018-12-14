@@ -24,13 +24,13 @@ public class RotatablePlanarYUVLuminanceSource extends LuminanceSource {
     private final int top;
 
     public RotatablePlanarYUVLuminanceSource(byte[] yuvData,
-                                       int dataWidth,
-                                       int dataHeight,
-                                       int left,
-                                       int top,
-                                       int width,
-                                       int height,
-                                       boolean reverseHorizontal) {
+                                             int dataWidth,
+                                             int dataHeight,
+                                             int left,
+                                             int top,
+                                             int width,
+                                             int height,
+                                             boolean reverseHorizontal) {
         super(width, height);
         this.yuvData = yuvData;
         this.dataWidth = dataWidth;
@@ -96,7 +96,7 @@ public class RotatablePlanarYUVLuminanceSource extends LuminanceSource {
     public LuminanceSource rotateCounterClockwise45() {
         //现在最新的zxing v3.3.3 没有使用这个方法。
         //防止以后的使用了而不崩，返回this？
-        Log.w(TAG,"rotateCounterClockwise45 was called but not impl!");
+        Log.w(TAG, "rotateCounterClockwise45 was called but not impl!");
         return this;
     }
 
