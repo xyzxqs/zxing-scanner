@@ -41,6 +41,10 @@ public final class ZxingEncoder {
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;
 
+    private ZxingEncoder(){
+        //no instance
+    }
+
 
     public static Bitmap encodeAsBitmap(String contentsToEncode, int dimension) throws WriterException {
         return encodeAsBitmap(contentsToEncode, BarcodeFormat.QR_CODE, dimension, dimension);
