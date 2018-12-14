@@ -76,16 +76,17 @@ public class CameraViewHelper implements LifecycleObserver {
             ThreadUtils.runOnBackgroundThread(() -> {
 
                 RotatablePlanarYUVLuminanceSource source = null;
+                Rect rect;
                 if (fullscreenScan) {
-                    source = new RotatablePlanarYUVLuminanceSource(data, width, height,
-                            0, 0, width, height, false);
+                    rect = getCameraViewInPreview();
                 }
                 else {
-                    Rect rect = getFramingRectInPreview();
-                    if (rect != null) {
-                        source = new RotatablePlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
-                                rect.width(), rect.height(), false);
-                    }
+                    rect = getFramingRectInPreview();
+                }
+
+                if (rect != null) {
+                    source = new RotatablePlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
+                            rect.width(), rect.height(), false);
                 }
                 final Result result = zxingDecoder.decode(source);
                 final RotatablePlanarYUVLuminanceSource finalSource = source;
@@ -104,8 +105,7 @@ public class CameraViewHelper implements LifecycleObserver {
 
     private volatile Rect framingRect;
     private volatile Rect framingRectInPreview;
-    //cameraView的大小
-    private volatile Size cameraViewSize;
+    private volatile Rect cameraViewInPreview;
 
     /**
      * Calculates the framing rect which the UI should draw to show the user where to place the
@@ -116,14 +116,14 @@ public class CameraViewHelper implements LifecycleObserver {
      */
     public Rect getFramingRect() {
         if (framingRect == null) {
+            int cameraViewWidth = cameraView.getWidth();
+            int cameraViewHeight = cameraView.getHeight();
 
-            cameraViewSize = new Size(cameraView.getWidth(), cameraView.getHeight());
+            int width = findDesiredDimensionInRange(cameraViewWidth, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
+            int height = findDesiredDimensionInRange(cameraViewHeight, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
 
-            int width = findDesiredDimensionInRange(cameraViewSize.getWidth(), MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
-            int height = findDesiredDimensionInRange(cameraViewSize.getHeight(), MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
-
-            int leftOffset = (cameraViewSize.getWidth() - width) / 2;
-            int topOffset = (cameraViewSize.getHeight() - height) / 2;
+            int leftOffset = (cameraViewWidth - width) / 2;
+            int topOffset = (cameraViewHeight - height) / 2;
             framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
@@ -141,47 +141,109 @@ public class CameraViewHelper implements LifecycleObserver {
         return dim;
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
+    public Rect getCameraViewInPreview() {
+        if (cameraViewInPreview == null) {
+            Size previewSize = cameraView.getPreviewSize();
+            if (previewSize == null) {
+                return null;
+            }
+
+            int cameraViewWidth = cameraView.getWidth();
+            int cameraViewHeight = cameraView.getHeight();
+
+            int realPreviewWidth = previewSize.getWidth();
+            int realPreviewHeight = previewSize.getHeight();
+            {   //处理
+
+                boolean isRotated = false;
+                if (cameraView.getCameraRotation() % 180 == 90) {
+                    int tmp = realPreviewHeight;
+                    realPreviewHeight = realPreviewWidth;
+                    realPreviewWidth = tmp;
+                    isRotated = true;
+                }
+
+                //调整preview的宽高比 与cameraView的一致
+
+                //宽高比越大的越扁
+                if (((cameraViewWidth * 1.0f) / cameraViewHeight) > ((realPreviewWidth * 1.0f) / realPreviewHeight)) {
+                    realPreviewHeight = realPreviewWidth * cameraViewHeight / cameraViewWidth;
+                }
+                else {
+                    realPreviewWidth = realPreviewHeight * cameraViewWidth / cameraViewHeight;
+                }
+
+                //调整后，如果preview比cameraView大，应该使用cameraView的宽高？(因为不会被压缩？
+                if (realPreviewHeight > cameraViewHeight) {
+                    Log.d(TAG, "getFramingRectInPreview: set same as cameraView");
+                    realPreviewWidth = cameraViewWidth;
+                    realPreviewHeight = cameraViewHeight;
+                }
+
+                if (isRotated) {
+                    int tmp = realPreviewHeight;
+                    realPreviewHeight = realPreviewWidth;
+                    realPreviewWidth = tmp;
+                }
+            }
+
+
+            int realLeft = (previewSize.getWidth() - realPreviewWidth) / 2;
+            int realTop = (previewSize.getHeight() - realPreviewHeight) / 2;
+            cameraViewInPreview = new Rect(realLeft, realTop, realLeft + realPreviewWidth, realTop + realPreviewHeight);
+        }
+
+        return cameraViewInPreview;
+    }
+
     /**
      * Like {@link #getFramingRect} but coordinates are in terms of the preview frame,
      * not UI / screen.
      *
      * @return {@link Rect} expressing barcode scan area in terms of the preview size
      */
+    @SuppressWarnings("SuspiciousNameCombination")
     public Rect getFramingRectInPreview() {
         if (framingRectInPreview == null) {
+            Rect cameraViewInPreview = getCameraViewInPreview();
 
-            Size previewSize = cameraView.getPreviewSize();
-            if (previewSize == null) {
-                return null;
-            }
             Rect rect = new Rect(getFramingRect());
 
-            int realPreviewWidth, realPreviewHeight;
-            if (previewSize.getWidth() < cameraViewSize.getWidth() && previewSize.getHeight() > cameraViewSize.getHeight()) {
-                //以width当真的width
-                realPreviewWidth = previewSize.getWidth();
-                realPreviewHeight = realPreviewWidth * cameraViewSize.getHeight() / cameraViewSize.getWidth();
-            }
-            else if (previewSize.getWidth() > cameraViewSize.getWidth() && previewSize.getHeight() < cameraViewSize.getHeight()) {
-                //以height当真的height
-                realPreviewHeight = previewSize.getHeight();
-                realPreviewWidth = realPreviewHeight * cameraViewSize.getWidth() / cameraViewSize.getHeight();
-            }
-            else {
-                realPreviewWidth = previewSize.getWidth();
-                realPreviewHeight = previewSize.getHeight();
+            int cameraViewWidth = cameraView.getWidth();
+            int cameraViewHeight = cameraView.getHeight();
+
+            int realPreviewWidth = cameraViewInPreview.width();
+            int realPreviewHeight = cameraViewInPreview.height();
+
+            boolean isRotated = false;
+            if (cameraView.getCameraRotation() % 180 == 90) {
+                int tmp = realPreviewHeight;
+                realPreviewHeight = realPreviewWidth;
+                realPreviewWidth = tmp;
+                isRotated = true;
             }
 
+            rect.left = rect.left * realPreviewWidth / cameraViewWidth;
+            rect.top = rect.top * realPreviewHeight / cameraViewHeight;
 
-            rect.left = rect.left * realPreviewWidth / cameraViewSize.getWidth();
-            rect.right = rect.right * realPreviewWidth / cameraViewSize.getWidth();
-            rect.top = rect.top * realPreviewHeight / cameraViewSize.getHeight();
-            rect.bottom = rect.bottom * realPreviewHeight / cameraViewSize.getHeight();
+            rect.right = rect.right * realPreviewWidth / cameraViewWidth;
+            rect.bottom = rect.bottom * realPreviewHeight / cameraViewHeight;
 
-            int realLeft = (previewSize.getWidth() - realPreviewWidth) / 2 + rect.left;
-            int realTop = (previewSize.getHeight() - realPreviewHeight) / 2 + rect.top;
+            int framingWidthInPreview = rect.width();
+            int framingHeightInPreview = rect.height();
 
-            framingRectInPreview = new Rect(realLeft, realTop, realLeft + rect.width(), realTop + rect.height());
+            if (isRotated) {
+                int tmp = framingHeightInPreview;
+                framingHeightInPreview = framingWidthInPreview;
+                framingWidthInPreview = tmp;
+            }
+
+
+            int realLeft = cameraViewInPreview.left + (cameraViewInPreview.width() - framingWidthInPreview) / 2;
+            int realTop = cameraViewInPreview.top + (cameraViewInPreview.height() - framingHeightInPreview) / 2;
+            framingRectInPreview = new Rect(realLeft, realTop,
+                    realLeft + framingWidthInPreview, realTop + framingHeightInPreview);
         }
         return framingRectInPreview;
     }
