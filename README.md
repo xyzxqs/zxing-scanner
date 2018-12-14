@@ -3,10 +3,10 @@
 Zxing QRCode/BarCode lib for Android
 
 ## Features
-* Only wrapper zhe [zxing](https://github.com/zxing/zxing) core lib for android, easy to use
-* Provide optional cameraview lib (base on [camreaview](https://github.com/google/cameraview))
+* Only wrapped zhe [zxing](https://github.com/zxing/zxing) core lib for android, easy to use
+* Provided optional `cameraview` lib (base on [camreaview](https://github.com/google/cameraview))
 
-## Gradle：
+## Using Gradle
 ```groovy
   implementation 'io.github.xyzxqs.libs:zxingscanner:1.0.0'
 
