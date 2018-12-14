@@ -74,7 +74,8 @@ public class RotatablePlanarYUVLuminanceSource extends LuminanceSource {
     public LuminanceSource rotateCounterClockwise() {
         //向右旋转90度
 
-        byte[] rightRotate90Data = new byte[yuvData.length];
+        //只旋转y数据（放弃uv数据
+        byte[] rightRotate90Data = new byte[dataWidth * dataHeight];
         for (int y = 0; y < dataHeight; y++) {
             for (int x = 0; x < dataWidth; x++) {
                 rightRotate90Data[x * dataHeight + dataHeight - y - 1] = yuvData[x + y * dataWidth];
