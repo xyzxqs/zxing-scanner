@@ -33,6 +33,9 @@
             android:name=".CaptureActivity"
             android:label="二维码/条码"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus" />
+        <activity
+            android:name=".EncodeActivity"
+            android:label="二维码" />
     </application>
 
 </manifest>
