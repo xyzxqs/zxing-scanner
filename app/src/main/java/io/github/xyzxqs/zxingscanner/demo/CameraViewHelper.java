@@ -4,6 +4,7 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.graphics.Rect;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.zxing.Result;
@@ -142,6 +143,7 @@ public class CameraViewHelper implements LifecycleObserver {
     }
 
     @SuppressWarnings("SuspiciousNameCombination")
+    @Nullable
     public Rect getCameraViewInPreview() {
         if (cameraViewInPreview == null) {
             Size previewSize = cameraView.getPreviewSize();
@@ -204,9 +206,13 @@ public class CameraViewHelper implements LifecycleObserver {
      * @return {@link Rect} expressing barcode scan area in terms of the preview size
      */
     @SuppressWarnings("SuspiciousNameCombination")
+    @Nullable
     public Rect getFramingRectInPreview() {
         if (framingRectInPreview == null) {
             Rect cameraViewInPreview = getCameraViewInPreview();
+            if (cameraViewInPreview == null) {
+                return null;
+            }
 
             Rect rect = new Rect(getFramingRect());
 
