@@ -134,7 +134,7 @@ public class ZxingDecoder {
             return new ZxingDecoder(hints);
         }
 
-        public Builder decodeFormats(Collection<BarcodeFormat> decodeFormats) {
+        public Builder possibleFormats(Collection<BarcodeFormat> decodeFormats) {
             this.decodeFormats = decodeFormats;
             return this;
         }
