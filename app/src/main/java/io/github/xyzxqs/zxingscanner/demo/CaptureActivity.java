@@ -75,7 +75,7 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
             public void onCameraOpened(CameraView cameraView) {
                 super.onCameraOpened(cameraView);
                 cameraViewHelper.startDecode();
-
+                viewfinderView.drawViewfinder();
             }
         });
     }
