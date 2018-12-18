@@ -41,7 +41,7 @@ public class Caller {
     public interface Callback {
         void shouldShowRequestPermissionsRationale(int reqCode, Delegate delegate);
 
-        void permissionsGranted(int reqCode);
+        void permissionsResult(int reqCode, boolean granted);
     }
 
     public static void startActivityForResult(Context context, Intent intent, int requestCode, OnActivityResult onActivityResult) {
@@ -108,12 +108,12 @@ public class Caller {
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static void checkSelfPermissions(final Context context, final int reqCode, final Callback callback, final String... permission) {
         if (checkSelfPermissions(context, permission)) {
-            callback.permissionsGranted(reqCode);
+            callback.permissionsResult(reqCode, true);
         }
         else {
             final OnRequestPermissionsResult result = (requestCode, permissions, grantResults) -> {
-                if (verifyPermissions(grantResults)) {
-                    callback.permissionsGranted(reqCode);
+                if (callback != null) {
+                    callback.permissionsResult(reqCode, verifyPermissions(grantResults));
                 }
             };
             if (shouldShowRequestPermissionRationale(context, permission)) {

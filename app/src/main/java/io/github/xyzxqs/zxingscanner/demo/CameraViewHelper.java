@@ -49,7 +49,7 @@ public class CameraViewHelper implements LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private void onResume() {
-        checkPermission4AccessCamera(cameraView, cameraView::start);
+        cameraView.start();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)

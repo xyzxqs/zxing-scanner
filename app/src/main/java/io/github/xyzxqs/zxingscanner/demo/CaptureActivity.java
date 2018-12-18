@@ -63,6 +63,23 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
 
         setSupportActionBar(toolbar);
 
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        PermissionUtil.checkPermission4AccessCamera(cameraView, t -> {
+            if (!t) {
+                Toast.makeText(CaptureActivity.this, "抱歉，没有摄像头权限无法扫码", Toast.LENGTH_SHORT)
+                        .show();
+                finish();
+            }
+            else {
+                uiSetup();
+            }
+        });
+    }
+
+    private void uiSetup() {
         imageHelper = new ImageHelper();
         cameraViewHelper = new CameraViewHelper(getLifecycle(), cameraView);
         cameraViewHelper.setDecodeResultHandler(this);
@@ -110,8 +127,15 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.select_from_gallery) {
-            PermissionUtil.checkPermission4AccessFile(cameraView,
-                    this::startGalleryIntent);
+            PermissionUtil.checkPermission4AccessFile(cameraView, t -> {
+                if (t) {
+                    startGalleryIntent();
+                }
+                else {
+                    Toast.makeText(CaptureActivity.this, "没有文件权限无法打开图册", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
             return true;
         }
         else if (item.getItemId() == R.id.one_shot_preview) {

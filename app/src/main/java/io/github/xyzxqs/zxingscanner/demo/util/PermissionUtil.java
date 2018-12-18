@@ -12,7 +12,7 @@ public class PermissionUtil {
     private PermissionUtil() {
     }
 
-    public static void checkPermission4AccessFile(final View view, final Action onPermissionGrated) {
+    public static void checkPermission4AccessFile(final View view, final BooleanConsumer permissionResult) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Caller.checkSelfPermissions(view.getContext(), 23, new Caller.Callback() {
                 @Override
@@ -24,17 +24,17 @@ public class PermissionUtil {
                 }
 
                 @Override
-                public void permissionsGranted(int reqCode) {
-                    onPermissionGrated.run();
+                public void permissionsResult(int reqCode, boolean granted) {
+                    permissionResult.accept(granted);
                 }
             }, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
         else {
-            onPermissionGrated.run();
+            permissionResult.accept(true);
         }
     }
 
-    public static void checkPermission4AccessCamera(final View view, final Action onPermissionGrated) {
+    public static void checkPermission4AccessCamera(final View view, final BooleanConsumer permissionResult) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Caller.checkSelfPermissions(view.getContext(), 23, new Caller.Callback() {
                 @Override
@@ -46,13 +46,13 @@ public class PermissionUtil {
                 }
 
                 @Override
-                public void permissionsGranted(int reqCode) {
-                    onPermissionGrated.run();
+                public void permissionsResult(int reqCode, boolean granted) {
+                    permissionResult.accept(granted);
                 }
             }, Manifest.permission.CAMERA);
         }
         else {
-            onPermissionGrated.run();
+            permissionResult.accept(true);
         }
     }
 }
