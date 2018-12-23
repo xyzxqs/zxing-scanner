@@ -48,7 +48,12 @@ public final class ZxingEncoder {
     }
 
     public static Bitmap encodeAsBitmap(String contentsToEncode, int dimension) throws WriterException {
-        return encodeAsBitmap(contentsToEncode, BarcodeFormat.QR_CODE, dimension, dimension);
+        return encodeAsBitmap(contentsToEncode, dimension, null);
+    }
+
+    public static Bitmap encodeAsBitmap(String contentsToEncode, int dimension,
+                                        @Nullable Map<EncodeHintType, ?> baseHints) throws WriterException {
+        return encodeAsBitmap(contentsToEncode, BarcodeFormat.QR_CODE, dimension, dimension, baseHints);
     }
 
     public static Bitmap encodeAsBitmap(String contentsToEncode, BarcodeFormat format,
