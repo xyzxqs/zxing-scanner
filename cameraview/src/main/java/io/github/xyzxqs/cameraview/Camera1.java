@@ -20,8 +20,8 @@ import android.annotation.SuppressLint;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v4.util.SparseArrayCompat;
+import androidx.annotation.Nullable;
+import androidx.collection.SparseArrayCompat;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
