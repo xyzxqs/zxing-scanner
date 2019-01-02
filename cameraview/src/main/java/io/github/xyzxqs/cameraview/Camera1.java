@@ -20,12 +20,13 @@ import android.annotation.SuppressLint;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v4.util.SparseArrayCompat;
+import androidx.annotation.Nullable;
+import androidx.collection.SparseArrayCompat;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -159,9 +160,11 @@ class Camera1 extends CameraViewImpl implements Camera.PreviewCallback {
     @Override
     Set<AspectRatio> getSupportedAspectRatios() {
         SizeMap idealAspectRatios = mPreviewSizes;
-        for (AspectRatio aspectRatio : idealAspectRatios.ratios()) {
+        Iterator<AspectRatio> iterator = idealAspectRatios.ratios().iterator();
+        while (iterator.hasNext()) {
+            AspectRatio aspectRatio = iterator.next();
             if (mPictureSizes.sizes(aspectRatio) == null) {
-                idealAspectRatios.remove(aspectRatio);
+                iterator.remove();
             }
         }
         return idealAspectRatios.ratios();

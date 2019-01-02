@@ -17,14 +17,12 @@
 package io.github.xyzxqs.cameraview;
 
 import android.content.Context;
-import android.support.v4.view.ViewCompat;
+import androidx.core.view.ViewCompat;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-
-import io.github.xyzxqs.cameraview.R;
 
 class SurfaceViewPreview extends PreviewImpl {
 
