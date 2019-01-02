@@ -17,7 +17,7 @@
 package io.github.xyzxqs.zxingscanner.encode;
 
 import android.graphics.Bitmap;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
