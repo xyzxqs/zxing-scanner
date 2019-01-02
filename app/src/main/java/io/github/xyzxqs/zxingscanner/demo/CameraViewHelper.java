@@ -1,22 +1,20 @@
 package io.github.xyzxqs.zxingscanner.demo;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
 import android.graphics.Rect;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.zxing.Result;
 import com.google.zxing.ResultPointCallback;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 import io.github.xyzxqs.cameraview.CameraView;
 import io.github.xyzxqs.cameraview.Size;
 import io.github.xyzxqs.zxingscanner.decode.RotatablePlanarYUVLuminanceSource;
 import io.github.xyzxqs.zxingscanner.decode.ZxingDecoder;
 import io.github.xyzxqs.zxingscanner.demo.util.ThreadUtils;
-
-import static io.github.xyzxqs.zxingscanner.demo.util.PermissionUtil.checkPermission4AccessCamera;
 
 /**
  * @author xyzxqs

@@ -3,8 +3,8 @@ package io.github.xyzxqs.zxingscanner.demo.util.internal;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import android.util.SparseArray;
 
 import io.github.xyzxqs.zxingscanner.demo.util.Caller;

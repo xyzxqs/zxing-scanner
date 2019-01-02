@@ -3,7 +3,7 @@ package io.github.xyzxqs.zxingscanner.demo.util;
 import android.Manifest;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.design.widget.Snackbar;
+import com.google.android.material.snackbar.Snackbar;
 import android.view.View;
 
 

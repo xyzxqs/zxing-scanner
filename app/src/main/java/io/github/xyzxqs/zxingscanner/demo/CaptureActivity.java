@@ -9,9 +9,9 @@ import android.graphics.YuvImage;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,8 +23,6 @@ import com.google.zxing.Result;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.github.xyzxqs.cameraview.CameraView;
 import io.github.xyzxqs.cameraview.OneShotPreviewCallback;
 import io.github.xyzxqs.zxingscanner.decode.BitmapUtils;
@@ -40,16 +38,12 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
         return i;
     }
 
-    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @BindView(R.id.camera_view)
     CameraView cameraView;
 
-    @BindView(R.id.viewfinder_view)
     ViewfinderView viewfinderView;
 
-    @BindView(R.id.image)
     ImageView imageView;
 
     private CameraViewHelper cameraViewHelper;
@@ -59,7 +53,10 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capture);
-        ButterKnife.bind(this);
+        toolbar=findViewById(R.id.toolbar);
+        cameraView=findViewById(R.id.camera_view);
+        viewfinderView=findViewById(R.id.viewfinder_view);
+        imageView=findViewById(R.id.image);
 
         setSupportActionBar(toolbar);
 
