@@ -1,7 +1,7 @@
 package io.github.xyzxqs.zxingscanner.decode;
 
 import android.graphics.Bitmap;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.google.zxing.BarcodeFormat;
@@ -134,7 +134,7 @@ public class ZxingDecoder {
             return new ZxingDecoder(hints);
         }
 
-        public Builder decodeFormats(Collection<BarcodeFormat> decodeFormats) {
+        public Builder possibleFormats(Collection<BarcodeFormat> decodeFormats) {
             this.decodeFormats = decodeFormats;
             return this;
         }

@@ -17,6 +17,7 @@
 package io.github.xyzxqs.zxingscanner.encode;
 
 import android.graphics.Bitmap;
+import androidx.annotation.Nullable;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -36,6 +37,7 @@ import java.util.Map;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author xyzxqs
  */
+@SuppressWarnings("WeakerAccess")
 public final class ZxingEncoder {
 
     private static final int WHITE = 0xFFFFFFFF;
@@ -45,21 +47,35 @@ public final class ZxingEncoder {
         //no instance
     }
 
-
     public static Bitmap encodeAsBitmap(String contentsToEncode, int dimension) throws WriterException {
-        return encodeAsBitmap(contentsToEncode, BarcodeFormat.QR_CODE, dimension, dimension);
+        return encodeAsBitmap(contentsToEncode, dimension, null);
+    }
+
+    public static Bitmap encodeAsBitmap(String contentsToEncode, int dimension,
+                                        @Nullable Map<EncodeHintType, ?> baseHints) throws WriterException {
+        return encodeAsBitmap(contentsToEncode, BarcodeFormat.QR_CODE, dimension, dimension, baseHints);
     }
 
     public static Bitmap encodeAsBitmap(String contentsToEncode, BarcodeFormat format,
                                         int preferredWidth, int preferredHeight) throws WriterException {
+        return encodeAsBitmap(contentsToEncode, format, preferredWidth, preferredHeight, null);
+    }
+
+    public static Bitmap encodeAsBitmap(String contentsToEncode, BarcodeFormat format,
+                                        int preferredWidth, int preferredHeight,
+                                        @Nullable Map<EncodeHintType, ?> baseHints) throws WriterException {
         if (contentsToEncode == null) {
             return null;
         }
-        Map<EncodeHintType, Object> hints = null;
-        String encoding = guessAppropriateEncoding(contentsToEncode);
-        if (encoding != null) {
-            hints = new EnumMap<>(EncodeHintType.class);
-            hints.put(EncodeHintType.CHARACTER_SET, encoding);
+        Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
+        if (baseHints != null && baseHints.isEmpty()) {
+            hints.putAll(baseHints);
+        }
+        if (!hints.containsKey(EncodeHintType.CHARACTER_SET)) {
+            String encoding = guessAppropriateEncoding(contentsToEncode);
+            if (encoding != null) {
+                hints.put(EncodeHintType.CHARACTER_SET, encoding);
+            }
         }
         BitMatrix result;
         try {
