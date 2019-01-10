@@ -1,7 +1,7 @@
 package io.github.xyzxqs.zxingscanner.decode;
 
 import android.graphics.Bitmap;
-import androidx.annotation.Nullable;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.google.zxing.BarcodeFormat;
@@ -21,6 +21,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.annotation.Nullable;
 import io.github.xyzxqs.zxingscanner.BuildConfig;
 
 /**
@@ -56,8 +57,22 @@ public class ZxingDecoder {
         return rawResult;
     }
 
-    public Result decodeImageStream(InputStreamProvider provider) throws IOException {
-        return decodeBitmap(BitmapUtils.decodeStream(provider));
+    /**
+     * decode from png or jpeg bytes src
+     */
+    public Result decodeImage(byte[] imgSrc, int offset, int length, boolean compress) throws IOException {
+        Bitmap bitmap;
+        if (compress) {
+            bitmap = BitmapUtils.decodeByteArrayWithCompress(imgSrc, offset, length);
+        }
+        else {
+            bitmap = BitmapFactory.decodeByteArray(imgSrc, offset, length);
+        }
+        return decodeBitmap(bitmap);
+    }
+
+    public Result decodeImage(byte[] imgSrc, boolean compress) throws IOException {
+        return decodeImage(imgSrc, 0, imgSrc.length, compress);
     }
 
     @Nullable
