@@ -18,20 +18,16 @@ public class BitmapUtils {
         //no instance
     }
 
-    public static Bitmap decodeStream(InputStreamProvider provider) throws IOException {
+    public static Bitmap decodeByteArrayWithCompress(byte[] src, int offset, int length) throws IOException {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-            compressImage(provider, stream, false);
-            return decodeStream(stream);
+            compressImage(src, offset, length, stream, false);
+            byte[] bytes = stream.toByteArray();
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
     }
 
-    public static Bitmap decodeStream(ByteArrayOutputStream out) {
-        byte[] bytes = out.toByteArray();
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-    }
-
-    public static void compressImage(InputStreamProvider srcImg, OutputStream os, boolean focusAlpha) throws IOException {
-        Luban.Instance.compress(srcImg, os, focusAlpha);
+    public static void compressImage(byte[] src, int offset, int length, OutputStream os, boolean focusAlpha) throws IOException {
+        Luban.SINGLE.compress(src, offset, length, os, focusAlpha);
     }
 
 
