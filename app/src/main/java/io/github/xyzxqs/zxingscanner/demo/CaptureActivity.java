@@ -3,15 +3,13 @@ package io.github.xyzxqs.zxingscanner.demo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +21,9 @@ import com.google.zxing.Result;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import io.github.xyzxqs.cameraview.CameraView;
 import io.github.xyzxqs.cameraview.OneShotPreviewCallback;
 import io.github.xyzxqs.zxingscanner.decode.BitmapUtils;
@@ -53,10 +54,10 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capture);
-        toolbar=findViewById(R.id.toolbar);
-        cameraView=findViewById(R.id.camera_view);
-        viewfinderView=findViewById(R.id.viewfinder_view);
-        imageView=findViewById(R.id.image);
+        toolbar = findViewById(R.id.toolbar);
+        cameraView = findViewById(R.id.camera_view);
+        viewfinderView = findViewById(R.id.viewfinder_view);
+        imageView = findViewById(R.id.image);
 
         setSupportActionBar(toolbar);
 
@@ -104,7 +105,8 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
 
             try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
                 BitmapUtils.buildThumbnail(source, stream);
-                Bitmap bitmap = BitmapUtils.decodeStream(stream);
+                byte[] buf = stream.toByteArray();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(buf, 0, buf.length);
                 viewfinderView.drawResultBitmap(bitmap);
             }
             catch (IOException e) {
@@ -150,7 +152,8 @@ public class CaptureActivity extends AppCompatActivity implements CameraViewHelp
                     }
                     try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
                         yuvImage.compressToJpeg(pr, 50, stream);
-                        Bitmap bitmap = BitmapUtils.decodeStream(stream);
+                        byte[] buf = stream.toByteArray();
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(buf, 0, buf.length);
 
                         imageView.setVisibility(View.VISIBLE);
                         imageView.setRotation(cameraView.getCameraRotation());
