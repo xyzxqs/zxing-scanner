@@ -8,14 +8,15 @@ Zxing QRCode/BarCode lib for Android
 
 ## Using Gradle
 ```groovy
-  implementation 'io.github.xyzxqs.libs:zxingscanner:1.0.0'
+  // androidx
+  implementation 'io.github.xyzxqs.libs:zxingscanner:3.0.0'
 
   implementation 'com.google.zxing:core:3.3.3'
 
   implementation 'com.android.support:appcompat-v7:28.0.0'
 
   //optional
-  implementation 'io.github.xyzxqs.libs:cameraview:1.0.0'
+  implementation 'io.github.xyzxqs.libs:cameraview:2.0.0'
 
 ```
 
