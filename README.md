@@ -13,7 +13,7 @@ Zxing QRCode/BarCode lib for Android
 
   implementation 'com.google.zxing:core:3.3.3'
 
-  implementation 'com.android.support:appcompat-v7:28.0.0'
+  implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
 
   //optional
   implementation 'io.github.xyzxqs.libs:cameraview:2.0.0'
