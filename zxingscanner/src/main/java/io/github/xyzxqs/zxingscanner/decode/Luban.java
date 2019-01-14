@@ -93,7 +93,7 @@ enum Luban {
 
         private static final String TAG = "Luban";
 
-        private final byte[] JPEG_SIGNATURE = new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
+        private static final byte[] JPEG_SIGNATURE = new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
 
         /**
          * Determine if it is JPG.
